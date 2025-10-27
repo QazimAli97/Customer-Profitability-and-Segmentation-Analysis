@@ -37,3 +37,15 @@ inner join Customer c
 on s.Customer_ID = c.Customer_ID
 group by  Customer_Name
 order by [Total Profit] desc
+
+--4)
+select c.Customer_ID,Customer_Name,Profit,
+case 
+	when Profit <= 500 then 'Silver'
+	when Profit <= 2500 then 'Gold'
+	else 'Platinum'
+	end as Classification
+from Sales s
+inner join Customer c
+on s.Customer_ID = c.Customer_ID
+order by Profit desc
