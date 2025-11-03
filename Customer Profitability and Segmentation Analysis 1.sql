@@ -4,9 +4,10 @@ select * from Customer
 
 
 with cte as (
-	select s.Customer_ID,Customer_Name,sum(sales)[Total sales],
+	select Customer_Name,
 	sum(Profit)[Total Profit], 
-	count(distinct order_id)[Order count]
+	rank() over(order by sum(Profit) desc) [Rank],
+	NTILE(3) OVER(ORDER BY SUM(profit) DESC) AS Profit_Tier_Rank
 
 	from Customer c
 	inner join Sales s
@@ -16,11 +17,14 @@ with cte as (
 	group by s.Customer_ID,Customer_Name
 	)
 select * ,
-	rank() over(order by [Total Profit] desc) [Rank],case 
-	when [Total Profit]<= 500 then 'Silver'
-	when [Total Profit] <= 2500 then 'Gold'
-	else 'Platinum'
-	end as Classification
+	case Profit_Tier_Rank
+	when 1 then 'Platinum'
+	when 2 then 'Gold'
+	when 3 then 'Silver'
+	End as Classification
 
 from cte
+order by Rank;
+
+
 
